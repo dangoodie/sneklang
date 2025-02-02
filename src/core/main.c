@@ -1,19 +1,16 @@
+#include "../vm/vm.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../vm/vm.h"
 
-int main(int argc, char *argv[])
-{
-  if (argc < 2)
-  {
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
     printf("Usage: sneklang <script.snek>\n");
     return 1;
   }
 
   const char *script_path = argv[1];
   FILE *file = fopen(script_path, "r");
-  if (!file)
-  {
+  if (!file) {
     printf("Error: Could not open script %s\n", script_path);
     return 1;
   }

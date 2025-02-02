@@ -8,21 +8,18 @@
 typedef struct VirtualMachine vm_t;
 typedef struct SnekObject snek_object_t;
 
-typedef struct
-{
+typedef struct {
   size_t size;
   snek_object_t **elements;
 } snek_array_t;
 
-typedef struct
-{
+typedef struct {
   snek_object_t *x;
   snek_object_t *y;
   snek_object_t *z;
 } snek_vector_t;
 
-typedef enum SnekObjectKind
-{
+typedef enum SnekObjectKind {
   INTEGER,
   FLOAT,
   STRING,
@@ -30,8 +27,7 @@ typedef enum SnekObjectKind
   ARRAY,
 } snek_object_kind_t;
 
-typedef union SnekObjectData
-{
+typedef union SnekObjectData {
   int v_int;
   float v_float;
   char *v_string;
@@ -39,8 +35,7 @@ typedef union SnekObjectData
   snek_array_t v_array;
 } snek_object_data_t;
 
-typedef struct SnekObject
-{
+typedef struct SnekObject {
   bool is_marked;
 
   snek_object_kind_t kind;

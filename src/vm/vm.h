@@ -4,15 +4,13 @@
 
 typedef struct SnekObject snek_object_t;
 
-typedef struct VirtualMachine
-{
-    stack_t *frames;  // Stack of function call frames
-    stack_t *objects; // Stack of allocated objects for GC
+typedef struct VirtualMachine {
+  stack_t *frames;  // Stack of function call frames
+  stack_t *objects; // Stack of allocated objects for GC
 } vm_t;
 
-typedef struct StackFrame
-{
-    stack_t *references; // Tracks local references
+typedef struct StackFrame {
+  stack_t *references; // Tracks local references
 } frame_t;
 
 /// VM Lifecycle Management

@@ -3,11 +3,9 @@
 
 #include "snekobject.h"
 
-snek_object_t *_new_snek_object(vm_t *vm)
-{
+snek_object_t *_new_snek_object(vm_t *vm) {
   snek_object_t *obj = calloc(1, sizeof(snek_object_t));
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
@@ -18,17 +16,14 @@ snek_object_t *_new_snek_object(vm_t *vm)
   return obj;
 }
 
-snek_object_t *new_snek_array(vm_t *vm, size_t size)
-{
+snek_object_t *new_snek_array(vm_t *vm, size_t size) {
   snek_object_t *obj = _new_snek_object(vm);
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
   snek_object_t **elements = calloc(size, sizeof(snek_object_t *));
-  if (elements == NULL)
-  {
+  if (elements == NULL) {
     free(obj);
     return NULL;
   }
@@ -39,17 +34,14 @@ snek_object_t *new_snek_array(vm_t *vm, size_t size)
   return obj;
 }
 
-snek_object_t *new_snek_vector3(
-    vm_t *vm, snek_object_t *x, snek_object_t *y, snek_object_t *z)
-{
-  if (x == NULL || y == NULL || z == NULL)
-  {
+snek_object_t *new_snek_vector3(vm_t *vm, snek_object_t *x, snek_object_t *y,
+                                snek_object_t *z) {
+  if (x == NULL || y == NULL || z == NULL) {
     return NULL;
   }
 
   snek_object_t *obj = _new_snek_object(vm);
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
@@ -59,11 +51,9 @@ snek_object_t *new_snek_vector3(
   return obj;
 }
 
-snek_object_t *new_snek_integer(vm_t *vm, int value)
-{
+snek_object_t *new_snek_integer(vm_t *vm, int value) {
   snek_object_t *obj = _new_snek_object(vm);
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
@@ -73,11 +63,9 @@ snek_object_t *new_snek_integer(vm_t *vm, int value)
   return obj;
 }
 
-snek_object_t *new_snek_float(vm_t *vm, float value)
-{
+snek_object_t *new_snek_float(vm_t *vm, float value) {
   snek_object_t *obj = _new_snek_object(vm);
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
@@ -86,18 +74,15 @@ snek_object_t *new_snek_float(vm_t *vm, float value)
   return obj;
 }
 
-snek_object_t *new_snek_string(vm_t *vm, char *value)
-{
+snek_object_t *new_snek_string(vm_t *vm, char *value) {
   snek_object_t *obj = _new_snek_object(vm);
-  if (obj == NULL)
-  {
+  if (obj == NULL) {
     return NULL;
   }
 
   int len = strlen(value);
   char *dst = malloc(len + 1);
-  if (dst == NULL)
-  {
+  if (dst == NULL) {
     free(obj);
     return NULL;
   }

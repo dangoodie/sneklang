@@ -3,8 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-typedef struct Stack
-{
+typedef struct Stack {
   size_t count;
   size_t capacity;
   void **data;

@@ -1,4 +1,5 @@
 #include "../vm/vm.h"
+#include "../lexer/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,13 +21,30 @@ int main(int argc, char *argv[]) {
   long length = ftell(file);
   fseek(file, 0, SEEK_SET);
   char *source = malloc(length + 1);
+  if (!source) {
+    printf("Error: Could not allocate memory for script\n");
+    fclose(file);
+    return 1;
+  }
+
   fread(source, 1, length, file);
-  fclose(file);
   source[length] = '\0';
+  fclose(file);
 
   // Initialize VM
   vm_t *vm = vm_new();
   printf("Executing %s...\n", script_path);
+
+  // Lexer
+  lexer_t *lexer = lexer_new(source);
+  token_t *token;
+
+  printf("\n### Tokenised Output ###\n");
+  while((token = lexer_next_token(lexer))->type != TOKEN_EOF) {
+    token_print(*token);
+    token_free(token);
+  }
+  token_free(token);
 
   // TODO: Call the parser and execution engine (not implemented yet)
   // execute_script(vm, source);

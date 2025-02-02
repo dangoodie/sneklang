@@ -1,4 +1,5 @@
 #include "vm.h"
+#include "../objects/snekobject.h"
 
 vm_t *vm_new() {
   vm_t *vm = malloc(sizeof(vm_t));
@@ -12,12 +13,12 @@ vm_t *vm_new() {
 }
 
 void vm_free(vm_t *vm) {
-  for (int i = 0; i < vm->frames->count; i++) {
+  for (size_t i = 0; i < vm->frames->count; i++) {
     frame_free(vm->frames->data[i]);
   }
   stack_free(vm->frames);
 
-  for (int i = 0; i < vm->objects->count; i++) {
+  for (size_t i = 0; i < vm->objects->count; i++) {
     snek_object_free(vm->objects->data[i]);
   }
   stack_free(vm->objects);

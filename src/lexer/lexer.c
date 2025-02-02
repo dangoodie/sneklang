@@ -92,14 +92,14 @@ token_t *lexer_next_token(lexer_t *lexer)
     case '-':
         if (isdigit(lexer_peek(lexer)))
         {
-            return parse_number(lexer, true);
+            return parse_number(lexer);
         }
         return token_new(TOKEN_MINUS, "-", 1, line);
     // Handle numbers (int and float)
     default:
         if (isdigit(c))
         {
-            return parse_number(lexer, false);
+            return parse_number(lexer);
         }
         // Handle strings
         if (c == '"')
@@ -150,7 +150,7 @@ token_t *lexer_next_token(lexer_t *lexer)
     }
 }
 
-token_t *parse_number(lexer_t *lexer, bool is_negative)
+token_t *parse_number(lexer_t *lexer)
 {
     char buffer[64]; // Ensure a buffer large enough for floats
     int i = 0;

@@ -1,13 +1,27 @@
-#include "munit.h"
-#include "vm.h"
-#include "sneknew.h"
+#include "../src/vm/vm.h"
+#include "../src/vm/gc.h"
+#include "../src/objects/sneknew.h"
+#include "test_vm.h"
+#include "munit/munit.h"
 
-munit_case(RUN, test_gc, {
-  vm_t *vm = vm_new();
-  snek_object_t *obj = new_snek_integer(vm, 42);
-  vm_collect_garbage(vm);
-  assert_false(boot_is_freed(obj));
+MunitResult test_gc(const MunitParameter params[], void *user_data)
+{
+    vm_t *vm = vm_new();
+    frame_t *f1 = vm_new_frame(vm);
 
-  vm_free(vm);
-  assert_true(boot_is_freed(obj));
-});
+    snek_object_t *s = new_snek_string(vm, "I wish I knew how to read.");
+    frame_reference_object(f1, s);
+    vm_collect_garbage(vm);
+    // nothing should be collected because
+    // we haven't freed the frame
+    munit_assert_int(vm->objects->count, ==, 1);
+
+    frame_free(vm_frame_pop(vm));
+    vm_collect_garbage(vm);
+    // now the string should be collected
+    munit_assert_int(vm->objects->count, ==, 0);
+
+    vm_free(vm);
+
+    return MUNIT_OK;
+}

@@ -76,6 +76,8 @@ token_t *lexer_next_token(lexer_t *lexer)
         return token_new(TOKEN_LBRACKET, "[", 1, line);
     case ']':
         return token_new(TOKEN_RBRACKET, "]", 1, line);
+    case ':':
+        return token_new(TOKEN_COLON, ":", 1, line);
     case '>':
         return token_new(TOKEN_GREATER, ">", 1, line);
     case '<':
@@ -85,6 +87,7 @@ token_t *lexer_next_token(lexer_t *lexer)
     case '=':
         return token_new(TOKEN_EQUAL, "=", 1, line);
     case '\n':
+        lexer->line++;
         return token_new(TOKEN_EOL, "", 0, line);
     case '\0':
         return token_new(TOKEN_EOF, "", 0, line);
@@ -207,8 +210,8 @@ token_t *token_new(token_type_t type, char *lexeme, int length, int line)
 // Print a token
 void token_print(token_t token)
 {
-    printf("Token { type: %d, lexeme: '%s', line: %d }\n", token.type,
-           token.lexeme, token.line);
+    printf("Token { type: %s, lexeme: '%s', line: %d }\n",
+           token_type_to_string(token.type), token.lexeme, token.line);
 }
 
 // Free a token
@@ -218,5 +221,52 @@ void token_free(token_t *token)
     {
         free(token->lexeme);
         free(token);
+    }
+}
+
+char *token_type_to_string(token_type_t type)
+{
+    switch (type)
+    {
+    case TOKEN_INT:
+        return "TOKEN_INT";
+    case TOKEN_FLOAT:
+        return "TOKEN_FLOAT";
+    case TOKEN_STRING:
+        return "TOKEN_STRING";
+    case TOKEN_IDENTIFIER:
+        return "TOKEN_IDENTIFIER";
+    case TOKEN_PLUS:
+        return "TOKEN_PLUS";
+    case TOKEN_MINUS:
+        return "TOKEN_MINUS";
+    case TOKEN_STAR:
+        return "TOKEN_STAR";
+    case TOKEN_SLASH:
+        return "TOKEN_SLASH";
+    case TOKEN_EQUAL:
+        return "TOKEN_EQUAL";
+    case TOKEN_GREATER:
+        return "TOKEN_GREATER";
+    case TOKEN_LESS:
+        return "TOKEN_LESS";
+    case TOKEN_LPAREN:
+        return "TOKEN_LPAREN";
+    case TOKEN_RPAREN:
+        return "TOKEN_RPAREN";
+    case TOKEN_LBRACKET:
+        return "TOKEN_LBRACKET";
+    case TOKEN_RBRACKET:
+        return "TOKEN_RBRACKET";
+    case TOKEN_COMMA:
+        return "TOKEN_COMMA";
+    case TOKEN_COLON:
+        return "TOKEN_COLON";
+    case TOKEN_EOF:
+        return "TOKEN_EOF";
+    case TOKEN_EOL:
+        return "TOKEN_EOL";
+    default:
+        return "TOKEN_UNKNOWN";
     }
 }

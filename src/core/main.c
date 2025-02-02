@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
     token_print(*token);
     token_free(token);
   }
+  token_print(*token);
   token_free(token);
 
   // TODO: Call the parser and execution engine (not implemented yet)

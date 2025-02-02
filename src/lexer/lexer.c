@@ -80,8 +80,14 @@ token_t lexer_next_token(lexer_t *lexer)
         return (token_t){TOKEN_LBRACKET, "[", 1, line};
     case ']':
         return (token_t){TOKEN_RBRACKET, "]", 1, line};
+    case '>':
+        return (token_t){TOKEN_GREATER, ">", 1, line};
+    case '<':
+        return (token_t){TOKEN_LESS, "<", 1, line};
     case ',':
         return (token_t){TOKEN_COMMA, ",", 1, line};
+    case '=':
+        return (token_t){TOKEN_EQUAL, "=", 1, line};
 
     case '\0':
         return (token_t){TOKEN_EOF, "EOF", 3, line};
@@ -154,4 +160,27 @@ token_t lexer_next_token(lexer_t *lexer)
         fprintf(stderr, "Lexer Error: Unknown character '%c' on line %d\n", c, line);
         exit(1);
     }
+}
+
+// Print a token
+void token_print(token_t token)
+{
+    printf("Token { type: %d, lexeme: '%s', line: %d }\n", token.type, token.lexeme, token.line);
+}
+
+// Free a token
+void token_free(token_t *token)
+{
+    if (token == NULL)
+        return;
+
+    // Free only dynamically allocated lexemes (created with strdup)
+    if (token->type == TOKEN_INT ||
+        token->type == TOKEN_FLOAT ||
+        token->type == TOKEN_STRING ||
+        token->type == TOKEN_IDENTIFIER)
+    {
+        free((char *)token->lexeme);
+    }
+    free(token);
 }

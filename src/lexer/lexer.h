@@ -16,7 +16,10 @@ typedef enum
     TOKEN_RPAREN,     // )
     TOKEN_LBRACKET,   // [
     TOKEN_RBRACKET,   // ]
+    TOKEN_GREATER,    // >
+    TOKEN_LESS,       // <
     TOKEN_COMMA,      // ,
+    TOKEN_EQUAL,      // =
     TOKEN_IDENTIFIER, // variable names (foo, bar)
     TOKEN_EOF,        // end of file
     TOKEN_ERROR       // error token (for unrecognized characters)
@@ -42,3 +45,5 @@ typedef struct
 lexer_t *lexer_new(const char *source);   // Create a new lexer
 void lexer_free(lexer_t *lexer);          // Free the lexer memory
 token_t lexer_next_token(lexer_t *lexer); // Fetch the next token
+void token_print(token_t token);          // Print a token
+void token_free(token_t *token);          // Free a token

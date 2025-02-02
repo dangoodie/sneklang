@@ -8,3 +8,4 @@ MunitResult test_lexer_string(const MunitParameter params[], void *user_data);
 MunitResult test_lexer_operators(const MunitParameter params[], void *user_data);
 MunitResult test_lexer_brackets(const MunitParameter params[], void *user_data);
 MunitResult test_lexer_identifiers(const MunitParameter params[], void *user_data);
+MunitResult test_lexer_full_script(const MunitParameter params[], void *user_data);

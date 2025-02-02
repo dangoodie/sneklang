@@ -1,3 +1,7 @@
+# Sneklang build files
+test_runner
+sneklang
+
 # Prerequisites
 *.d
 

@@ -5,7 +5,7 @@ INCLUDES=-I./src -I./tests -I./tests/munit
 
 SRC=$(wildcard src/**/*.c)
 SRC := $(filter-out src/core/main.c, $(SRC))  # Exclude main.c from test build
-TEST_SRC=$(wildcard tests/test_vm.c tests/test_stack.c)
+TEST_SRC=$(wildcard tests/test_vm.c tests/test_stack.c tests/test_lexer.c)
 TEST_OBJ=$(TEST_SRC:.c=.o)
 OBJS=$(SRC:.c=.o)
 

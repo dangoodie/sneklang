@@ -31,9 +31,18 @@ int main(int argc, char *argv[]) {
   source[length] = '\0';
   fclose(file);
 
+  // Store pointer to source for later freeing
+  char *original_source = source;
+
   // Initialize VM
   vm_t *vm = vm_new();
   printf("Executing %s...\n", script_path);
+
+  // Print script contents
+  printf("\n### Script Contents ###\n");
+  printf("%s\n", source);
+
+  source = original_source;
 
   // Lexer
   lexer_t *lexer = lexer_new(source);

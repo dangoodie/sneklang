@@ -1,5 +1,5 @@
-#include "../vm/vm.h"
 #include "../lexer/lexer.h"
+#include "../vm/vm.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   token_t *token;
 
   printf("\n### Tokenised Output ###\n");
-  while((token = lexer_next_token(lexer))->type != TOKEN_EOF) {
+  while ((token = lexer_next_token(lexer))->type != TOKEN_EOF) {
     token_print(*token);
     token_free(token);
   }

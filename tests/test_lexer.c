@@ -104,33 +104,77 @@ const char *test_script = "x = 42 + 3.14\n"
 
 MunitResult test_lexer_full_script(const MunitParameter params[],
                                    void *user_data) {
-  lexer_t *lexer = lexer_new(test_script);
-  int token_count = 30;
-  token_t *tokens[token_count];
+  // Test script with deeper indentation levels and dedentation
+  const char *test_script = "x: float = 42 + 3.14\n"
+                            "message: string = \"Hello, world!\"\n"
+                            "vector: vector_3 = [1.0, 2.5, -3.6]\n"
+                            "\n" // Empty line
+                            "if x > 10:\n"
+                            "    print(message)\n"
+                            "    if x < 50:\n"
+                            "        print(\"Nested if\")\n"
+                            "    print(\"Back to first level\")\n"
+                            "if x == 42:\n"
+                            "    print(\"Another if statement\")\n"
+                            "print(\"Back to global scope\")\n";
 
-  for (int i = 0; i < token_count; i++) {
-    tokens[i] = lexer_next_token(lexer);
-  }
+  lexer_t *lexer = lexer_new(test_script);
 
   // Expected token types in order
   token_type_t expected_types[] = {
-      TOKEN_IDENTIFIER, TOKEN_EQUAL,      TOKEN_INT,        TOKEN_PLUS,
-      TOKEN_FLOAT,      TOKEN_EOL,        TOKEN_IDENTIFIER, TOKEN_EQUAL,
-      TOKEN_STRING,     TOKEN_EOL,        TOKEN_IDENTIFIER, TOKEN_EQUAL,
+      TOKEN_IDENTIFIER, TOKEN_COLON,      TOKEN_IDENTIFIER, TOKEN_EQUAL,
+      TOKEN_INT,        TOKEN_PLUS,       TOKEN_FLOAT,      TOKEN_EOL,
+
+      TOKEN_IDENTIFIER, TOKEN_COLON,      TOKEN_IDENTIFIER, TOKEN_EQUAL,
+      TOKEN_STRING,     TOKEN_EOL,
+
+      TOKEN_IDENTIFIER, TOKEN_COLON,      TOKEN_IDENTIFIER, TOKEN_EQUAL,
       TOKEN_LBRACKET,   TOKEN_FLOAT,      TOKEN_COMMA,      TOKEN_FLOAT,
       TOKEN_COMMA,      TOKEN_FLOAT,      TOKEN_RBRACKET,   TOKEN_EOL,
+
+      TOKEN_EOL, // Empty line
+
       TOKEN_IDENTIFIER, TOKEN_IDENTIFIER, TOKEN_GREATER,    TOKEN_INT,
-      TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_IDENTIFIER, TOKEN_RPAREN,
-      TOKEN_EOL,        TOKEN_EOF};
+      TOKEN_COLON,      TOKEN_EOL,
+
+      TOKEN_INDENT,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_IDENTIFIER,
+      TOKEN_RPAREN,     TOKEN_EOL,
+
+      TOKEN_IDENTIFIER, TOKEN_IDENTIFIER, TOKEN_LESS,       TOKEN_INT,
+      TOKEN_COLON,      TOKEN_EOL,
+
+      TOKEN_INDENT,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,
+      TOKEN_RPAREN,     TOKEN_EOL,        TOKEN_DEDENT,
+
+      TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,     TOKEN_RPAREN,
+      TOKEN_EOL,        TOKEN_DEDENT,
+
+      TOKEN_IDENTIFIER, TOKEN_IDENTIFIER, TOKEN_EQUAL,      TOKEN_EQUAL,
+      TOKEN_INT,        TOKEN_COLON,      TOKEN_EOL,
+
+      TOKEN_INDENT,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,
+      TOKEN_RPAREN,     TOKEN_EOL,        TOKEN_DEDENT,
+
+      TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,     TOKEN_RPAREN,
+      TOKEN_EOL,
+
+      TOKEN_EOF};
 
   int expected_count = sizeof(expected_types) / sizeof(expected_types[0]);
+  token_t *tokens[expected_count];
 
-  // Validate token order
+  // Tokenize and store results
+  for (int i = 0; i < expected_count; i++) {
+    tokens[i] = lexer_next_token(lexer);
+  }
+
+  // Validate token order and correctness
   for (int i = 0; i < expected_count; i++) {
     munit_assert_int(tokens[i]->type, ==, expected_types[i]);
   }
 
-  for (int i = 0; i < token_count; i++) {
+  // Clean up memory
+  for (int i = 0; i < expected_count; i++) {
     token_free(tokens[i]);
   }
 

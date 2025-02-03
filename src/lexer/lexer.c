@@ -109,6 +109,10 @@ token_t *lexer_next_token(lexer_t *lexer) {
     return token_new(TOKEN_LBRACKET, "[", 1, line);
   case ']':
     return token_new(TOKEN_RBRACKET, "]", 1, line);
+  case '{':
+    return token_new(TOKEN_LBRACE, "{", 1, line);
+  case '}':
+    return token_new(TOKEN_RBRACE, "}", 1, line);
   case ':':
     return token_new(TOKEN_COLON, ":", 1, line);
   case '>':

@@ -16,6 +16,8 @@ typedef enum {
   TOKEN_RPAREN,     // )
   TOKEN_LBRACKET,   // [
   TOKEN_RBRACKET,   // ]
+  TOKEN_LBRACE,     // {
+  TOKEN_RBRACE,     // }
   TOKEN_COLON,      // :
   TOKEN_GREATER,    // >
   TOKEN_LESS,       // <

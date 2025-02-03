@@ -125,13 +125,13 @@ token_t *lexer_next_token(lexer_t *lexer) {
     return token_new(TOKEN_EQUAL, "=", 1, line);
   case '-':
     if (isdigit(lexer_peek(lexer))) {
-      return parse_number(lexer);
+      return parse_number(lexer, c);
     }
     return token_new(TOKEN_MINUS, "-", 1, line);
   // Handle numbers (int and float)
   default:
     if (isdigit(c)) {
-      return parse_number(lexer);
+      return parse_number(lexer, c);
     }
     // Handle strings
     if (c == '"') {
@@ -175,13 +175,13 @@ token_t *lexer_next_token(lexer_t *lexer) {
   }
 }
 
-token_t *parse_number(lexer_t *lexer) {
+token_t *parse_number(lexer_t *lexer, char c) {
   char buffer[64]; // Ensure a buffer large enough for floats
   int i = 0;
   int has_dot = 0;
+  lexer->start = lexer->current;
 
-  buffer[i++] = lexer->start[0]; // Include the first character in the lexeme
-
+  buffer[i++] = c;
   while (isdigit(lexer_peek(lexer)) || (lexer_peek(lexer) == '.' && !has_dot)) {
     if (lexer_peek(lexer) == '.') {
       has_dot = 1;

@@ -56,6 +56,5 @@ token_t *token_new(token_type_t type, char *lexeme, int length,
                    int line);          // Create a new token
 void token_print(token_t token);       // Print a token
 void token_free(token_t *token);       // Free a token
-token_t *parse_number(lexer_t *lexer); // Parse a number
-char *
-token_type_to_string(token_type_t type); // Convert a token type to a string
+token_t *parse_number(lexer_t *lexer, char c); // Parse a number
+char *token_type_to_string(token_type_t type); // Convert a token type to a string

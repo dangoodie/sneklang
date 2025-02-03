@@ -1,6 +1,6 @@
 #pragma once
 #include "../src/lexer/lexer.h"
-#include "munit.h"
+#include "munit/munit.h"
 
 MunitResult test_lexer_int(const MunitParameter params[], void *user_data);
 MunitResult test_lexer_float(const MunitParameter params[], void *user_data);

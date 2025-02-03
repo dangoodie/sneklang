@@ -160,6 +160,22 @@ MunitResult test_lexer_full_script(const MunitParameter params[],
 
       TOKEN_EOF};
 
+
+    // Expected strings in order
+  const char *expected_lexemes[] = {
+      "x", ":", "float", "=", "42", "+", "3.14", "",
+      "message", ":", "string", "=", "Hello, world!", "",
+      "vector", ":", "vector_3", "=", "[", "1.0", ",", "2.5", ",", "-3.6", "]", "",
+      "",
+      "if", "x", ">", "10", ":", "",
+      "", "print", "(", "message", ")", "",
+      "if", "x", "<", "50", ":", "",
+      "", "print", "(", "Nested if", ")", "",
+      "", "print", "(", "Back to first level", ")", "",
+      "", "if", "x", "=", "=", "42", ":", "",
+      "", "print", "(", "Another if statement", ")", "",
+      "", "print", "(", "Back to global scope", ")", "", ""};
+
   int expected_count = sizeof(expected_types) / sizeof(expected_types[0]);
   token_t *tokens[expected_count];
 
@@ -171,6 +187,7 @@ MunitResult test_lexer_full_script(const MunitParameter params[],
   // Validate token order and correctness
   for (int i = 0; i < expected_count; i++) {
     munit_assert_int(tokens[i]->type, ==, expected_types[i]);
+    munit_assert_string_equal(tokens[i]->lexeme, expected_lexemes[i]);
   }
 
   // Clean up memory

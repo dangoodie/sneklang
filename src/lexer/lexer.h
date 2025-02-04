@@ -20,6 +20,7 @@ typedef enum {
   TOKEN_LBRACE,     // {
   TOKEN_RBRACE,     // }
   TOKEN_COLON,      // :
+  TOKEN_SEMICOLON,  // ;
   TOKEN_GREATER,    // >
   TOKEN_LESS,       // <
   TOKEN_COMMA,      // ,

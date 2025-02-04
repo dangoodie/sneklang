@@ -120,6 +120,8 @@ token_t *lexer_next_token(lexer_t *lexer) {
     return token_new(TOKEN_RBRACE, "}", 1, line);
   case ':':
     return token_new(TOKEN_COLON, ":", 1, line);
+  case ';':
+    return token_new(TOKEN_SEMICOLON, ";", 1, line);
   case '>':
     return token_new(TOKEN_GREATER, ">", 1, line);
   case '<':
@@ -279,6 +281,8 @@ char *token_type_to_string(token_type_t type) {
     return "TOKEN_COMMA";
   case TOKEN_COLON:
     return "TOKEN_COLON";
+  case TOKEN_SEMICOLON:
+    return "TOKEN_SEMICOLON";
   case TOKEN_EOF:
     return "TOKEN_EOF";
   case TOKEN_EOL:

@@ -20,12 +20,17 @@ lexer_t *lexer_new(char *src) {
   lexer->indent_stack[lexer->indent_top] = 0;
   lexer->is_new_line = 1;
 
+  // Initialize the keyword table
+  lexer->keywords = keyword_table_new();
+  init_keywords(lexer);
+
   return lexer;
 }
 
 // Free the lexer instance
 void lexer_free(lexer_t *lexer) {
   if (lexer) {
+    keyword_table_free(lexer->keywords);
     free(lexer);
   }
 }
@@ -128,6 +133,7 @@ token_t *lexer_next_token(lexer_t *lexer) {
       return parse_number(lexer, c);
     }
     return token_new(TOKEN_MINUS, "-", 1, line);
+
   // Handle numbers (int and float)
   default:
     if (isdigit(c)) {
@@ -165,7 +171,10 @@ token_t *lexer_next_token(lexer_t *lexer) {
       }
       buffer[i] = '\0';
 
-      return token_new(TOKEN_IDENTIFIER, buffer, i, line);
+      // Check if the identifier is a reserved keyword
+      token_type_t type = lookup(lexer->keywords, buffer);
+
+      return token_new(type, buffer, i, line);
     }
 
     // Unknown token
@@ -278,7 +287,148 @@ char *token_type_to_string(token_type_t type) {
     return "TOKEN_INDENT";
   case TOKEN_DEDENT:
     return "TOKEN_DEDENT";
+  case TOKEN_IF:
+    return "TOKEN_IF";
+  case TOKEN_ELSE:
+    return "TOKEN_ELSE";
+  case TOKEN_ELIF:
+    return "TOKEN_ELIF";
+  case TOKEN_WHILE:
+    return "TOKEN_WHILE";
+  case TOKEN_FOR:
+    return "TOKEN_FOR";
+  case TOKEN_BREAK:
+    return "TOKEN_BREAK";
+  case TOKEN_CONTINUE:
+    return "TOKEN_CONTINUE";
+  case TOKEN_RETURN:
+    return "TOKEN_RETURN";
+  case TOKEN_VOID:
+    return "TOKEN_VOID";
+  case TOKEN_INT_KEYWORD:
+    return "TOKEN_INT_KEYWORD";
+  case TOKEN_FLOAT_KEYWORD:
+    return "TOKEN_FLOAT_KEYWORD";
+  case TOKEN_STRING_KEYWORD:
+    return "TOKEN_STRING_KEYWORD";
+  case TOKEN_BOOL_KEYWORD:
+    return "TOKEN_BOOL_KEYWORD";
+  case TOKEN_VECTOR_3_KEYWORD:
+    return "TOKEN_VECTOR_3_KEYWORD";
+  case TOKEN_ARRAY_KEYWORD:
+    return "TOKEN_ARRAY_KEYWORD";
+  case TOKEN_OR:
+    return "TOKEN_OR";
+  case TOKEN_AND:
+    return "TOKEN_AND";
+  case TOKEN_TRUE:
+    return "TOKEN_TRUE";
+  case TOKEN_FALSE:
+    return "TOKEN_FALSE";
+  case TOKEN_NULL_KEYWORD:
+    return "TOKEN_NULL_KEYWORD";
+  case TOKEN_DEF:
+    return "TOKEN_DEF";
+  case TOKEN_CLASS:
+    return "TOKEN_CLASS";
+  case TOKEN_IMPORT:
+    return "TOKEN_IMPORT";
   default:
     return "TOKEN_UNKNOWN";
   }
+}
+
+// Hashmap functions for reserved keywords
+
+// Hash function djb2 by Dan Bernstein
+unsigned int hash(const char *keyword) {
+  unsigned long hash = 5381;
+  int c;
+  while ((c = *keyword++)) {
+    hash = ((hash << 5) + hash) + c;
+  }
+  return hash % KEYWORD_COUNT;
+}
+
+// insert a keyword into the hashmap
+void insert(keyword_table_t *table, const char *keyword, token_type_t type) {
+  unsigned int index = hash(keyword);
+  keyword_node_t *new_node = malloc(sizeof(keyword_node_t));
+
+  new_node->keyword = strdup(keyword);
+  new_node->type = type;
+  new_node->next = table->table[index];
+  table->table[index] = new_node;
+}
+
+token_type_t lookup(keyword_table_t *table, const char *keyword) {
+  unsigned int index = hash(keyword);
+  keyword_node_t *node = table->table[index];
+
+  while (node != NULL) {
+    if (strcmp(node->keyword, keyword) == 0) {
+      return node->type;
+    }
+    node = node->next;
+  }
+
+  return TOKEN_IDENTIFIER;
+}
+
+// Create a new keyword table
+keyword_table_t *keyword_table_new() {
+  keyword_table_t *table = malloc(sizeof(keyword_table_t));
+  if (table == NULL) {
+    fprintf(stderr, "Keyword Table Error: Failed to allocate memory\n");
+    exit(EXIT_FAILURE);
+  }
+
+  for (int i = 0; i < KEYWORD_COUNT; i++) {
+    table->table[i] = NULL;
+  }
+
+  return table;
+}
+
+// Free a keyword table
+void keyword_table_free(keyword_table_t *table) {
+  if (table) {
+    for (int i = 0; i < KEYWORD_COUNT; i++) {
+      keyword_node_t *node = table->table[i];
+      while (node != NULL) {
+        keyword_node_t *next = node->next;
+        free(node->keyword);
+        free(node);
+        node = next;
+      }
+    }
+    free(table);
+  }
+}
+
+// Initialize the keyword table with reserved keywords
+void init_keywords(lexer_t *lexer) {
+  insert(lexer->keywords, "if", TOKEN_IF);
+  insert(lexer->keywords, "else", TOKEN_ELSE);
+  insert(lexer->keywords, "elif", TOKEN_ELIF);
+  insert(lexer->keywords, "while", TOKEN_WHILE);
+  insert(lexer->keywords, "for", TOKEN_FOR);
+  insert(lexer->keywords, "break", TOKEN_BREAK);
+  insert(lexer->keywords, "continue", TOKEN_CONTINUE);
+  insert(lexer->keywords, "return", TOKEN_RETURN);
+  insert(lexer->keywords, "void", TOKEN_VOID);
+  insert(lexer->keywords, "int", TOKEN_INT_KEYWORD);
+  insert(lexer->keywords, "float", TOKEN_FLOAT_KEYWORD);
+  insert(lexer->keywords, "string", TOKEN_STRING_KEYWORD);
+  insert(lexer->keywords, "bool", TOKEN_BOOL_KEYWORD);
+  insert(lexer->keywords, "vector_3", TOKEN_VECTOR_3_KEYWORD);
+  insert(lexer->keywords, "array", TOKEN_ARRAY_KEYWORD);
+  insert(lexer->keywords, "or", TOKEN_OR);
+  insert(lexer->keywords, "and", TOKEN_AND);
+  insert(lexer->keywords, "true", TOKEN_TRUE);
+  insert(lexer->keywords, "false", TOKEN_FALSE);
+  insert(lexer->keywords, "null", TOKEN_NULL_KEYWORD);
+  insert(lexer->keywords, "def", TOKEN_DEF);
+  insert(lexer->keywords, "class", TOKEN_CLASS);
+  insert(lexer->keywords, "import", TOKEN_IMPORT);
 }

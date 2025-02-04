@@ -22,6 +22,8 @@ MunitTest tests[] = {
      MUNIT_TEST_OPTION_NONE, NULL},
     {"/lexer/full_script", test_lexer_full_script, NULL, NULL,
      MUNIT_TEST_OPTION_NONE, NULL},
+    {"/lexer/literals", test_lexer_literals, NULL, NULL, MUNIT_TEST_OPTION_NONE,
+     NULL},
 
     {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE,
      NULL} // Null-terminated array

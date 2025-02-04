@@ -246,6 +246,14 @@ token_t *token_new(token_type_t type, char *lexeme, int length, int line) {
 
   memcpy(token->lexeme, lexeme, length);
   token->lexeme[length] = '\0';
+
+  // Add literals for identifiers, numbers and strings
+  if (type == TOKEN_INT) {
+    token->integer = atoi(lexeme);
+  } else if (type == TOKEN_FLOAT) {
+    token->floating = atof(lexeme);
+  } 
+
   return token;
 }
 

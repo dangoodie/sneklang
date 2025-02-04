@@ -198,3 +198,34 @@ MunitResult test_lexer_full_script(const MunitParameter params[],
   lexer_free(lexer);
   return MUNIT_OK;
 }
+
+// ✅ Test: Literals (Integers, Floats, Strings, Identifiers)
+MunitResult test_lexer_literals(const MunitParameter params[], void *user_data) {
+  lexer_t *lexer = lexer_new("42 -3.14 \"hello\" variableName");
+  token_t *tokens[4];
+
+  for (int i = 0; i < 4; i++) {
+    tokens[i] = lexer_next_token(lexer);
+  }
+
+  munit_assert_int(tokens[0]->type, ==, TOKEN_INT);
+  munit_assert_string_equal(tokens[0]->lexeme, "42");
+  munit_assert_int(tokens[0]->integer, ==, 42);
+
+  munit_assert_int(tokens[1]->type, ==, TOKEN_FLOAT);
+  munit_assert_string_equal(tokens[1]->lexeme, "-3.14");
+  munit_assert_double(tokens[1]->floating, ==, -3.14);
+
+  munit_assert_int(tokens[2]->type, ==, TOKEN_STRING);
+  munit_assert_string_equal(tokens[2]->lexeme, "hello");
+
+  munit_assert_int(tokens[3]->type, ==, TOKEN_IDENTIFIER);
+  munit_assert_string_equal(tokens[3]->lexeme, "variableName");
+
+  for (int i = 0; i < 4; i++) {
+    token_free(tokens[i]);
+  }
+
+  lexer_free(lexer);
+  return MUNIT_OK;
+}

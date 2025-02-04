@@ -82,11 +82,10 @@ typedef struct {
 typedef struct {
   token_type_t type; // The type of token
   char *lexeme;      // The actual lexeme (string representation)
-  union literal
+  union 
   {
     int integer;
     double floating;
-    char *string;
   };
   int line;          // Line number where the token was found
 } token_t;

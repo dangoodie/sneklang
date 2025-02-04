@@ -1,5 +1,6 @@
 #include "../lexer/lexer.h"
 #include "../vm/vm.h"
+#include "../parser/parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -44,19 +45,12 @@ int main(int argc, char *argv[]) {
 
   source = original_source;
 
-  // Lexer
   lexer_t *lexer = lexer_new(source);
-  token_t *token;
+  parser_t *parser = parser_new(lexer);
 
-  printf("\n### Tokenised Output ###\n");
-  while ((token = lexer_next_token(lexer))->type != TOKEN_EOF) {
-    token_print(*token);
-    token_free(token);
-  }
-  token_print(*token);
-  token_free(token);
+  parse_if_statement(parser);
 
-  // TODO: Call the parser and execution engine (not implemented yet)
+  // TODO: Call the execution engine (not implemented yet)
   // execute_script(vm, source);
 
   vm_free(vm);

@@ -1,6 +1,2 @@
-x: float = 42 + 3.14
-message: string = "Hello, world!"
-vector: vector_3 = [1.0, 2.5, -3.6]
-
-if x > 10:
+if 10:
     print(message)

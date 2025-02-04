@@ -68,10 +68,13 @@ typedef enum {
 // Hash table the keyword lookup
 #define KEYWORD_COUNT 256
 
-typedef struct {
+// Structure to hold a keyword node
+typedef struct KeywordNode keyword_node_t;
+
+typedef struct KeywordNode {
   char *keyword;
   token_type_t type;
-  struct keyword_node_t *next;
+  keyword_node_t *next;
 } keyword_node_t;
 
 typedef struct {
@@ -119,3 +122,27 @@ token_type_t lookup(keyword_table_t *table, const char *keyword); // Lookup a ke
 keyword_table_t *keyword_table_new(); // Create a new keyword table
 void keyword_table_free(keyword_table_t *table); // Free a keyword table
 void init_keywords(lexer_t *lexer); // Initialize the keyword table
+
+// Linked list of tokens
+typedef struct TokenNode {
+  token_t *token;
+  struct TokenNode *next;
+} token_node_t;
+
+// Function prototypes
+token_node_t *token_node_new(token_t *token); // Create a new token node
+void token_node_free(token_node_t *node);     // Free a token node
+void token_node_append(token_node_t **head, token_t *token); // Append a token to the list
+void token_node_print(token_node_t *head);    // Print the token list
+void token_node_free_all(token_node_t *head); // Free all tokens in the list
+token_t *token_node_pop(token_node_t **head); // Pop a token from the list
+bool token_node_is_empty(token_node_t *head); // Check if the list is empty
+token_t *token_node_peek(token_node_t *head); // Peek at the first token
+token_t *token_node_peek_next(token_node_t *head); // Peek at the next token
+token_t *token_node_peek_at(token_node_t *head, int index); // Peek at a token at an index
+void token_node_advance(token_node_t **head); // Advance the token list
+void token_node_reset(token_node_t **head);   // Reset the token list
+void token_node_reset_to(token_node_t **head, token_node_t *node); // Reset the token list to a node
+void token_node_insert(token_node_t **head, token_t *token); // Insert a token into the list
+void token_node_remove(token_node_t **head, token_t *token); // Remove a token from the list
+void token_node_remove_at(token_node_t **head, int index); // Remove a token at an index

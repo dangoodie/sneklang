@@ -149,7 +149,7 @@ MunitResult test_lexer_full_script(const MunitParameter params[],
       TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,     TOKEN_RPAREN,
       TOKEN_EOL,        TOKEN_DEDENT,
 
-      TOKEN_IF, TOKEN_IDENTIFIER, TOKEN_EQUAL,      TOKEN_EQUAL,
+      TOKEN_IF, TOKEN_IDENTIFIER, TOKEN_EQUAL_EQUAL,
       TOKEN_INT,        TOKEN_COLON,      TOKEN_EOL,
 
       TOKEN_INDENT,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_STRING,
@@ -172,7 +172,7 @@ MunitResult test_lexer_full_script(const MunitParameter params[],
       "if", "x", "<", "50", ":", "",
       "", "print", "(", "Nested if", ")", "",
       "", "print", "(", "Back to first level", ")", "",
-      "", "if", "x", "=", "=", "42", ":", "",
+      "", "if", "x", "==", "42", ":", "",
       "", "print", "(", "Another if statement", ")", "",
       "", "print", "(", "Back to global scope", ")", "", ""};
 

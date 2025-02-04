@@ -122,14 +122,32 @@ token_t *lexer_next_token(lexer_t *lexer) {
     return token_new(TOKEN_COLON, ":", 1, line);
   case ';':
     return token_new(TOKEN_SEMICOLON, ";", 1, line);
-  case '>':
-    return token_new(TOKEN_GREATER, ">", 1, line);
-  case '<':
-    return token_new(TOKEN_LESS, "<", 1, line);
   case ',':
     return token_new(TOKEN_COMMA, ",", 1, line);
+  case '>':
+    if (lexer_peek(lexer) == '=') {
+      lexer_advance(lexer);
+      return token_new(TOKEN_GREATER_EQUAL, ">=", 2, line);
+    }
+    return token_new(TOKEN_GREATER, ">", 1, line);
+  case '<':
+    if (lexer_peek(lexer) == '=') {
+      lexer_advance(lexer);
+      return token_new(TOKEN_LESS_EQUAL, "<=", 2, line);
+    }
+    return token_new(TOKEN_LESS, "<", 1, line);
   case '=':
+    if (lexer_peek(lexer) == '=') {
+      lexer_advance(lexer);
+      return token_new(TOKEN_EQUAL_EQUAL, "==", 2, line);
+    }
     return token_new(TOKEN_EQUAL, "=", 1, line);
+  case '!':
+    if (lexer_peek(lexer) == '=') {
+      lexer_advance(lexer);
+      return token_new(TOKEN_BANG_EQUAL, "!=", 2, line);
+    }
+    return token_new(TOKEN_BANG, "!", 1, line);
   case '-':
     if (isdigit(lexer_peek(lexer))) {
       return parse_number(lexer, c);
@@ -265,10 +283,20 @@ char *token_type_to_string(token_type_t type) {
     return "TOKEN_SLASH";
   case TOKEN_EQUAL:
     return "TOKEN_EQUAL";
+  case TOKEN_EQUAL_EQUAL:
+    return "TOKEN_EQUAL_EQUAL";
+  case TOKEN_BANG:
+    return "TOKEN_BANG";
+  case TOKEN_BANG_EQUAL:
+    return "TOKEN_BANG_EQUAL";
   case TOKEN_GREATER:
     return "TOKEN_GREATER";
+  case TOKEN_GREATER_EQUAL:
+    return "TOKEN_GREATER_EQUAL";
   case TOKEN_LESS:
     return "TOKEN_LESS";
+  case TOKEN_LESS_EQUAL:
+    return "TOKEN_LESS_EQUAL";
   case TOKEN_LPAREN:
     return "TOKEN_LPAREN";
   case TOKEN_RPAREN:

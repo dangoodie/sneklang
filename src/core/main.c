@@ -1,6 +1,6 @@
 #include "../lexer/lexer.h"
-#include "../vm/vm.h"
 #include "../parser/parser.h"
+#include "../vm/vm.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -46,9 +46,6 @@ int main(int argc, char *argv[]) {
   source = original_source;
 
   lexer_t *lexer = lexer_new(source);
-  parser_t *parser = parser_new(lexer);
-
-  parse_if_statement(parser);
 
   // TODO: Call the execution engine (not implemented yet)
   // execute_script(vm, source);

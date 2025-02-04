@@ -1,18 +1,61 @@
 #include "../lexer/lexer.h"
-#include <stdbool.h>
 
+typedef enum {
+  NODE_LITERAL,
+  NODE_BINARY_OP,
+  NODE_UNARY_OP,
+  NODE_VARIABLE,
+  NODE_ASSIGNMENT,
+  NODE_DECLARATION,
+} ast_node_type_t;
 
-// Struct for the parser
-typedef struct {
-    lexer_t *lexer;   // Lexer instance
-    token_t *current; // Current token 
-} parser_t;
+typedef struct ASTNode {
+  ast_node_type_t type;
+  union {
+    struct {
+      int value;
+    } literal;
+    struct {
+      char op;
+      struct ASTNode *left;
+      struct ASTNode *right;
+    } binary_op;
+    struct {
+      char op;
+      struct ASTNode *operand;
+    } unary_op;
+    struct {
+      char *name;
+      struct ASTNode *value;
+    } variable;
+    struct {
+      char *name;
+      struct ASTNode *value;
+    } assignment;
+    struct {
+      char *name;
+      char *type;
+      struct ASTNode *value;
+    } declaration;
+  };
+} ast_node_t;
 
-parser_t *parser_new(lexer_t *lexer);
-void parser_free(parser_t *parser);
-token_t *parser_peek(parser_t *parser);
-token_t *parser_advance(parser_t *parser);
-bool parser_match(parser_t *parser, token_type_t type);
-void parser_expect(parser_t *parser, token_type_t type, const char *error_msg);
-void parse_expression(parser_t *parser);
-void parse_if_statement(parser_t *parser);
+// Memory management
+ast_node_t *ast_new_node(ast_node_type_t type);
+ast_node_t *ast_new_literal_node(int value);
+ast_node_t *ast_new_binary_op_node(char op, ast_node_t *left,
+                                   ast_node_t *right);
+ast_node_t *ast_new_unary_op_node(char op, ast_node_t *operand);
+ast_node_t *ast_new_variable_node(char *name, ast_node_t *value);
+ast_node_t *ast_new_assignment_node(char *name, ast_node_t *value);
+ast_node_t *ast_new_declaration_node(char *name, char *type, ast_node_t *value);
+void ast_free_node(ast_node_t *node);
+
+// Parser function prototypes
+ast_node_t *parse_expression(lexer_t *lexer);
+ast_node_t *parse_primary(lexer_t *lexer);
+ast_node_t *parse_term(lexer_t *lexer);
+ast_node_t *parse_factor(lexer_t *lexer);
+ast_node_t *parse_declaration(lexer_t *lexer);
+ast_node_t *parse_assignment(lexer_t *lexer);
+ast_node_t *parse_statement(lexer_t *lexer);

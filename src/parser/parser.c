@@ -1,95 +1,113 @@
 #include "parser.h"
 #include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 
+ast_node_t *ast_new_node(ast_node_type_t type) {
+  ast_node_t *node = calloc(1, sizeof(ast_node_t));
+  if (node == NULL) {
+    return NULL;
+  }
 
-// New parser instance
-parser_t *parser_new(lexer_t *lexer) {
-    parser_t *parser = malloc(sizeof(parser_t));
-    if (!parser) {
-        fprintf(stderr, "Parser Error: Failed to allocate memory\n");
-        exit(1);
-    }
-    parser->lexer = lexer;
-    parser->current = lexer_next_token(lexer);
-    return parser;
+  node->type = type;
+  return node;
 }
 
-// Free the parser instance
-void parser_free(parser_t *parser) {
-    if (parser) {
-        if (parser->lexer) {
-            lexer_free(parser->lexer);
-        }
-        free(parser);
-    }
+ast_node_t *ast_new_literal_node(int value) {
+  ast_node_t *node = ast_new_node(NODE_LITERAL);
+  if (node == NULL) {
+    return NULL;
+  }
+
+  node->literal.value = value;
+  return node;
 }
 
-// Peek at the current token
-token_t *parser_peek(parser_t *parser) {
-    return parser->current;
+ast_node_t *ast_new_binary_op_node(char op, ast_node_t *left, ast_node_t *right) {
+  ast_node_t *node = ast_new_node(NODE_BINARY_OP);
+  if (node == NULL) {
+    return NULL;
+  }
+
+  node->binary_op.op = op;
+  node->binary_op.left = left;
+  node->binary_op.right = right;
+  return node;
 }
 
-// Advance to the next token
-token_t *parser_advance(parser_t *parser) {
-    if (parser->current->type != TOKEN_EOF) {
-        token_free(parser->current);
-        parser->current = lexer_next_token(parser->lexer);
-    }
-    return parser->current;
+ast_node_t *ast_new_unary_op_node(char op, ast_node_t *operand) {
+  ast_node_t *node = ast_new_node(NODE_UNARY_OP);
+  if (node == NULL) {
+    return NULL;
+  }
+
+  node->unary_op.op = op;
+  node->unary_op.operand = operand;
+  return node;
 }
 
-// Match the current token type
-bool parser_match(parser_t *parser, token_type_t type) {
-    if (parser->current->type == type) {
-        parser_advance(parser);
-        return true;
-    }
-    return false;
+ast_node_t *ast_new_variable_node(char *name, ast_node_t *value) {
+  ast_node_t *node = ast_new_node(NODE_VARIABLE);
+  if (node == NULL) {
+    return NULL;
+  }
+
+  node->variable.name = strdup(name);
+  node->variable.value = value;
+  return node;
 }
 
-// Expect a certain token type or report an error
-void parser_expect(parser_t *parser, token_type_t type, const char *error_msg) {
-    if (parser->current->type == type) {
-        printf("Matched token: %s\n", parser->current->lexeme);
-        parser_advance(parser);
-    } else {
-        fprintf(stderr, "Parser Error: %s at line %d\n", error_msg, parser->current->line);
-        exit(1);
-    }
+ast_node_t *ast_new_assignment_node(char *name, ast_node_t *value) {
+  ast_node_t *node = ast_new_node(NODE_ASSIGNMENT);
+  if (node == NULL) {
+    return NULL;
+  }
+
+  node->assignment.name = strdup(name);
+  node->assignment.value = value;
+  return node;
 }
 
-// Parse an expression
-void parse_expression(parser_t *parser) {
-    token_t *left = parser_advance(parser);
+ast_node_t *ast_new_declaration_node(char *name, char *type, ast_node_t *value) {
+  ast_node_t *node = ast_new_node(NODE_DECLARATION);
+  if (node == NULL) {
+    return NULL;
+  }
 
-    if (parser_match(parser, TOKEN_PLUS) || parser_match(parser, TOKEN_MINUS) ||
-        parser_match(parser, TOKEN_STAR) || parser_match(parser, TOKEN_SLASH)) {
-        token_t *op = parser_advance(parser);
-        token_t *right = parser_advance(parser);
-        printf("Parsed binary expression: %s %s %s\n", left->lexeme, op->lexeme, right->lexeme);
-    } else {
-        printf("Parsed single value: %s\n", left->lexeme);
-    }
+  node->declaration.name = strdup(name);
+  node->declaration.type = strdup(type);
+  node->declaration.value = value;
+  return node;
 }
 
+void ast_free_node(ast_node_t *node) {
+  if (node == NULL) {
+    return;
+  }
 
-// Parse an if statement
-void parse_if_statement(parser_t *parser) {
-    parser_expect(parser, TOKEN_IF, "Expected 'if' keyword");
+  switch (node->type) {
+    case NODE_LITERAL:
+      break;
+    case NODE_BINARY_OP:
+      ast_free_node(node->binary_op.left);
+      ast_free_node(node->binary_op.right);
+      break;
+    case NODE_UNARY_OP:
+      ast_free_node(node->unary_op.operand);
+      break;
+    case NODE_VARIABLE:
+      free(node->variable.name);
+      ast_free_node(node->variable.value);
+      break;
+    case NODE_ASSIGNMENT:
+      free(node->assignment.name);
+      ast_free_node(node->assignment.value);
+      break;
+    case NODE_DECLARATION:
+      free(node->declaration.name);
+      free(node->declaration.type);
+      ast_free_node(node->declaration.value);
+      break;
+  }
 
-    // Parse the condition (just a single value for now)
-    parse_expression(parser);
-
-    // Expect closing parenthesis and colon
-    parser_expect(parser, TOKEN_COLON, "Expected ':' after condition");
-    parser_expect(parser, TOKEN_EOL, "Expected newline after ':'");
-    parser_expect(parser, TOKEN_INDENT, "Expected indent after newline");
-
-    // Parse the body of the if statement
-    while(parser_peek(parser)->type != TOKEN_DEDENT) {
-        parse_expression(parser);
-    }
-
-    printf("Parsed if statement\n");
+  free(node);
 }

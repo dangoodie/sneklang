@@ -70,7 +70,7 @@ make clean && make
 ```
 
 ## **📜 License**
-Sneklang is open-source under the **MIT License**.
+Sneklang is open-source under the **GPL-3.0 License**.
 
 ---
 🚀 **Current development is focused on AST refinement & interpreter execution.** Stay tuned for updates! 🔥🐍

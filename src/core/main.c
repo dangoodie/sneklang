@@ -1,6 +1,5 @@
 #include "../lexer/lexer.h"
 #include "../parser/parser.h"
-#include "../vm/vm.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,10 +34,6 @@ int main(int argc, char *argv[]) {
   // Store pointer to source for later freeing
   char *original_source = source;
 
-  // Initialize VM
-  vm_t *vm = vm_new();
-  printf("Executing %s...\n", script_path);
-
   // Print script contents
   printf("\n### Script Contents ###\n");
   printf("%s\n", source);
@@ -46,11 +41,23 @@ int main(int argc, char *argv[]) {
   source = original_source;
 
   lexer_t *lexer = lexer_new(source);
+  parser_t *parser = parser_new(lexer);
+
+  // Parse the script
+  parser->root = parse_root(parser);
+  
+
+  // Print the AST
+  printf("\n### AST ###\n");
+  for (int i = 0; i < parser->root->count; i++) {
+    print_ast_tree(parser->root->nodes[i]);
+  }
 
   // TODO: Call the execution engine (not implemented yet)
-  // execute_script(vm, source);
-
-  vm_free(vm);
+  
+  // Clean up
+  lexer_free(lexer);
+  parser_free(parser);
   free(source);
   return 0;
 }
